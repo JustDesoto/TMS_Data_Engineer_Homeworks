@@ -1,28 +1,4 @@
--- Задача 1:Проанализировать данные о продажах билетов, чтобы получить статистику в разных разрезах
-SELECT
-    tf.fare_conditions,
-    EXTRACT(MONTH FROM f.scheduled_departure)  AS departure_month,
-    f.departure_airport,
-    COUNT(tf.ticket_no)                        AS ticket_count,
-    ROUND(SUM(tf.amount), 2)                   AS total_revenue,
-    ROUND(AVG(tf.amount), 2)                   AS avg_price
-FROM ticket_flights tf
-JOIN flights f ON f.flight_id = tf.flight_id
-GROUP BY GROUPING SETS (
-    (tf.fare_conditions),                          -- по классу
-    (departure_month),                             -- по месяцу
-    (f.departure_airport),                         -- по аэропорту
-    (tf.fare_conditions, departure_month),         -- класс + месяц
-    (tf.fare_conditions, f.departure_airport),     -- класс + аэропорт
-    (departure_month,    f.departure_airport),     -- месяц + аэропорт
-    ()                                             -- общий итог
-)
-ORDER BY
-    tf.fare_conditions,
-    departure_month,
-    f.departure_airport
-    
-    -- Задача 6: Найти рейсы, задержа которых превышает среднюю задержку по всем рейсам
+    -- Задача 1: Найти рейсы, задержа которых превышает среднюю задержку по всем рейсам
     with flight_delays as (
     select flight_id, flight_no, departure_airport, arrival_airport,  EXTRACT(EPOCH from (actual_departure - scheduled_departure)) / 60 as delay_minutes_departure, EXTRACT(EPOCH from (actual_arrival - scheduled_arrival )) / 60 as delay_minutes_arrival
     from flights f
